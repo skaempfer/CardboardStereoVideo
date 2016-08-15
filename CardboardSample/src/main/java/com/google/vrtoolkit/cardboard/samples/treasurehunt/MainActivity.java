@@ -16,12 +16,8 @@
 
 package com.google.vrtoolkit.cardboard.samples.treasurehunt;
 
-import com.google.vrtoolkit.cardboard.CardboardActivity;
-import com.google.vrtoolkit.cardboard.CardboardView;
-import com.google.vrtoolkit.cardboard.Eye;
-import com.google.vrtoolkit.cardboard.HeadTransform;
-import com.google.vrtoolkit.cardboard.Viewport;
-import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
+import com.google.vr.sdk.base.GvrActivity;
+import com.google.vr.sdk.base.GvrView;
 import com.ofemobile.samples.stereovideovr.R;
 
 import android.content.Context;
@@ -44,7 +40,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 /**
  * A Cardboard sample application.
  */
-public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer {
+//public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer {
+public class MainActivity extends GvrActivity implements GvrView.StereoRenderer {
+
   private static final String TAG = "MainActivity";
 
   private static final float Z_NEAR = 0.1f;
@@ -118,7 +116,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
   private float[] videoScreenModelMatrix = new float[16];
   boolean renderSereo = true;
 
-  private volatile int soundId = CardboardAudioEngine.INVALID_ID;
+  //private volatile int soundId = CardboardAudioEngine.INVALID_ID;
 
   /**
    * Converts a raw text file, saved as a resource, into an OpenGL ES shader.
@@ -173,10 +171,10 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.common_ui);
-    CardboardView cardboardView = (CardboardView) findViewById(R.id.cardboard_view);
-    cardboardView.setRestoreGLStateEnabled(false);
+    GvrView cardboardView = (GvrView) findViewById(R.id.cardboard_view);
+    //cardboardView.setRestoreGLStateEnabled(false);
     cardboardView.setRenderer(this);
-    setCardboardView(cardboardView);
+    //setCardboardView(cardboardView);
 
     modelCube = new float[16];
     camera = new float[16];
@@ -236,6 +234,51 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
   @Override
   public void onRendererShutdown() {
     Log.i(TAG, "onRendererShutdown");
+  }
+
+  @Override
+  public void onNewFrame(com.google.vr.sdk.base.HeadTransform headTransform) {
+
+  }
+
+  @Override
+  public void onDrawEye(com.google.vr.sdk.base.Eye eye) {
+    GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
+    checkGLError("colorParam");
+
+    // Apply the eye transformation to the camera.
+    Matrix.multiplyMM(view, 0, eye.getEyeView(), 0, camera, 0);
+
+    // Set the position of the light
+    Matrix.multiplyMV(lightPosInEyeSpace, 0, view, 0, LIGHT_POS_IN_WORLD_SPACE, 0);
+
+    // Build the ModelView and ModelViewProjection matrices
+    // for calculating cube position and light.
+    float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
+    Matrix.multiplyMM(modelView, 0, view, 0, modelCube, 0);
+    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
+//    drawCube();
+
+    // Set modelView for the floor, so we draw floor in the correct location
+    Matrix.multiplyMM(modelView, 0, view, 0, modelFloor, 0);
+    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
+    drawFloor();
+
+    float[] videoMVP =  new float[16];
+    Matrix.multiplyMM(videoMVP, 0, view, 0, videoScreenModelMatrix, 0);
+    Matrix.multiplyMM(videoMVP, 0, perspective, 0, videoMVP, 0);
+    mVideoRenderer.setMVPMatrix(videoMVP);
+    if (renderSereo)
+      mVideoRenderer.render(eye.getType());
+    else  //When stereo rendering turned off always render the bottom image.
+      mVideoRenderer.render(1);
+  }
+
+  @Override
+  public void onFinishFrame(com.google.vr.sdk.base.Viewport viewport) {
+
   }
 
   @Override
@@ -408,65 +451,65 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
    *
    * @param headTransform The head transformation in the new frame.
    */
-  @Override
-  public void onNewFrame(HeadTransform headTransform) {
-    // Build the Model part of the ModelView matrix.
-    Matrix.rotateM(modelCube, 0, TIME_DELTA, 0.5f, 0.5f, 1.0f);
-
-    // Build the camera matrix and apply it to the ModelView.
-    Matrix.setLookAtM(camera, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-    headTransform.getHeadView(headView, 0);
-
-    // Update the 3d audio engine with the most recent head rotation.
-    headTransform.getQuaternion(headRotation, 0);
-
-    checkGLError("onReadyToDraw");
-  }
+//  @Override
+//  public void onNewFrame(HeadTransform headTransform) {
+//    // Build the Model part of the ModelView matrix.
+//    Matrix.rotateM(modelCube, 0, TIME_DELTA, 0.5f, 0.5f, 1.0f);
+//
+//    // Build the camera matrix and apply it to the ModelView.
+//    Matrix.setLookAtM(camera, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+//
+//    headTransform.getHeadView(headView, 0);
+//
+//    // Update the 3d audio engine with the most recent head rotation.
+//    headTransform.getQuaternion(headRotation, 0);
+//
+//    checkGLError("onReadyToDraw");
+//  }
 
   /**
    * Draws a frame for an eye.
    *
    * @param eye The eye to render. Includes all required transformations.
    */
-  @Override
-  public void onDrawEye(Eye eye) {
+//  @Override
+//  public void onDrawEye(Eye eye) {
+//
+//    GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+//    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+//
+//    checkGLError("colorParam");
+//
+//    // Apply the eye transformation to the camera.
+//    Matrix.multiplyMM(view, 0, eye.getEyeView(), 0, camera, 0);
+//
+//    // Set the position of the light
+//    Matrix.multiplyMV(lightPosInEyeSpace, 0, view, 0, LIGHT_POS_IN_WORLD_SPACE, 0);
+//
+//    // Build the ModelView and ModelViewProjection matrices
+//    // for calculating cube position and light.
+//    float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
+//    Matrix.multiplyMM(modelView, 0, view, 0, modelCube, 0);
+//    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
+////    drawCube();
+//
+//    // Set modelView for the floor, so we draw floor in the correct location
+//    Matrix.multiplyMM(modelView, 0, view, 0, modelFloor, 0);
+//    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
+//    drawFloor();
+//
+//    float[] videoMVP =  new float[16];
+//    Matrix.multiplyMM(videoMVP, 0, view, 0, videoScreenModelMatrix, 0);
+//    Matrix.multiplyMM(videoMVP, 0, perspective, 0, videoMVP, 0);
+//    mVideoRenderer.setMVPMatrix(videoMVP);
+//    if (renderSereo)
+//      mVideoRenderer.render(eye.getType());
+//    else  //When stereo rendering turned off always render the bottom image.
+//      mVideoRenderer.render(1);
+//  }
 
-    GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-    checkGLError("colorParam");
-
-    // Apply the eye transformation to the camera.
-    Matrix.multiplyMM(view, 0, eye.getEyeView(), 0, camera, 0);
-
-    // Set the position of the light
-    Matrix.multiplyMV(lightPosInEyeSpace, 0, view, 0, LIGHT_POS_IN_WORLD_SPACE, 0);
-
-    // Build the ModelView and ModelViewProjection matrices
-    // for calculating cube position and light.
-    float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
-    Matrix.multiplyMM(modelView, 0, view, 0, modelCube, 0);
-    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
-//    drawCube();
-
-    // Set modelView for the floor, so we draw floor in the correct location
-    Matrix.multiplyMM(modelView, 0, view, 0, modelFloor, 0);
-    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
-    drawFloor();
-
-    float[] videoMVP =  new float[16];
-    Matrix.multiplyMM(videoMVP, 0, view, 0, videoScreenModelMatrix, 0);
-    Matrix.multiplyMM(videoMVP, 0, perspective, 0, videoMVP, 0);
-    mVideoRenderer.setMVPMatrix(videoMVP);
-    if (renderSereo)
-      mVideoRenderer.render(eye.getType());
-    else  //When stereo rendering turned off always render the bottom image.
-      mVideoRenderer.render(1);
-  }
-
-  @Override
-  public void onFinishFrame(Viewport viewport) {}
+//  @Override
+//  public void onFinishFrame(Viewport viewport) {}
 
   /**
    * Draw the cube.

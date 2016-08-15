@@ -6,10 +6,17 @@
     android:layout_height="fill_parent" >
 
 
-    <com.google.vrtoolkit.cardboard.CardboardView
+    <!--<com.google.vrtoolkit.cardboard.CardboardView-->
+        <!--android:id="@+id/cardboard_view"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentLeft="true" />-->
+
+    <com.google.vr.sdk.base.GvrView
         android:id="@+id/cardboard_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" />
 
