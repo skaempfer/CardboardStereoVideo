@@ -31,15 +31,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import javax.microedition.khronos.egl.EGLConfig;
 
 /**
  * A Cardboard sample application.
  */
-//public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer {
 public class MainActivity extends GvrActivity implements GvrView.StereoRenderer {
 
   private static final String TAG = "MainActivity";
@@ -116,8 +113,6 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
     vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
     overlayView = (CardboardOverlayView) findViewById(R.id.overlay);
-//    overlayView.show3DToast("Pull the magnet when you find an object.");
-
   }
 
   @Override
@@ -252,73 +247,9 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
   }
 
   /**
-   * Prepares OpenGL ES before we draw a frame.
-   *
-   * @param headTransform The head transformation in the new frame.
-   */
-//  @Override
-//  public void onNewFrame(HeadTransform headTransform) {
-//    // Build the Model part of the ModelView matrix.
-//    Matrix.rotateM(modelCube, 0, TIME_DELTA, 0.5f, 0.5f, 1.0f);
-//
-//    // Build the camera matrix and apply it to the ModelView.
-//    Matrix.setLookAtM(camera, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-//
-//    headTransform.getHeadView(headView, 0);
-//
-//    // Update the 3d audio engine with the most recent head rotation.
-//    headTransform.getQuaternion(headRotation, 0);
-//
-//    checkGLError("onReadyToDraw");
-//  }
-
-  /**
-   * Draws a frame for an eye.
-   *
-   * @param eye The eye to render. Includes all required transformations.
-   */
-//  @Override
-//  public void onDrawEye(Eye eye) {
-//
-//    GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-//    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-//
-//    checkGLError("colorParam");
-//
-//    // Apply the eye transformation to the camera.
-//    Matrix.multiplyMM(view, 0, eye.getEyeView(), 0, camera, 0);
-//
-//    // Set the position of the light
-//    Matrix.multiplyMV(lightPosInEyeSpace, 0, view, 0, LIGHT_POS_IN_WORLD_SPACE, 0);
-//
-//    // Build the ModelView and ModelViewProjection matrices
-//    // for calculating cube position and light.
-//    float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
-//    Matrix.multiplyMM(modelView, 0, view, 0, modelCube, 0);
-//    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
-////    drawCube();
-//
-//    // Set modelView for the floor, so we draw floor in the correct location
-//    Matrix.multiplyMM(modelView, 0, view, 0, modelFloor, 0);
-//    Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
-//    drawFloor();
-//
-//    float[] videoMVP =  new float[16];
-//    Matrix.multiplyMM(videoMVP, 0, view, 0, videoScreenModelMatrix, 0);
-//    Matrix.multiplyMM(videoMVP, 0, perspective, 0, videoMVP, 0);
-//    videoRenderer.setMVPMatrix(videoMVP);
-//    if (renderStereo)
-//      videoRenderer.render(eye.getType());
-//    else  //When stereo rendering turned off always render the bottom image.
-//      videoRenderer.render(1);
-//  }
-
-//  @Override
-//  public void onFinishFrame(Viewport viewport) {}
-
-
-  /**
    * Called when the Cardboard trigger is pulled.
+   *
+   * TODO: Doesn't work anymore since switching from old CardboardActivity to GvrActivity. Should be fixed to re-enable switching from 3D mode to 2D mode.
    */
   @Override
   public void onCardboardTrigger() {
