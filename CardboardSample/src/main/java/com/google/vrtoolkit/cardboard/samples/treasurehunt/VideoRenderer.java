@@ -158,10 +158,9 @@ public class VideoRenderer implements MediaPlayer.OnPreparedListener {
         mMediaPlayer = new MediaPlayer();
         try
         {
-            mMediaPlayer.setDataSource("rtsp://192.168.178.33:8554/");
+            mMediaPlayer.setDataSource("rtsp://<IP of streaming server>:8554/");
             mMediaPlayer.setSurface(new Surface(VideoSurfaceTexture));
             mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setLooping(true);
             mMediaPlayer.prepareAsync();
         }
         catch (IOException e){
