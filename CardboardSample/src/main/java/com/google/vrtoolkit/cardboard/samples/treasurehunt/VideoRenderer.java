@@ -19,7 +19,7 @@ import java.nio.ShortBuffer;
 /**
  * Created by Matthew Wellings on 1/18/16.
  */
-public class VideoRenderer {
+public class VideoRenderer implements MediaPlayer.OnPreparedListener {
 
     private static float virtualScreenVetrexCoords[] = {
             -1,  1, 0,
@@ -31,12 +31,15 @@ public class VideoRenderer {
             0, 1, 2,
             0, 2, 3};
 
+
     //Non Stereo
     private float videoTextureCoords[] = {
             0.0f, 1.0f, 0.0f, 1.0f,
             0.0f, 0.0f, 0.0f, 1.0f,
             1.0f, 0.0f, 0.0f, 1.0f,
             1.0f, 1.0f, 0.0f, 1.0f};
+
+/*** Coordinates for Top-Bottom videos ***
     //Top Image
     private float videoTextureCoordsTop[] = {
             0.0f, 0.5f, 0.0f, 1.0f,
@@ -49,6 +52,21 @@ public class VideoRenderer {
             0.0f, 0.5f, 0.0f, 1.0f,
             1.0f, 0.5f, 0.0f, 1.0f,
             1.0f, 1.0f, 0.0f, 1.0f,};
+ ***/
+
+/*** Coordinates for Side-by-Side videos ***/
+    // Left image
+    private float videoTextureCoordsBottom[] = {
+        0.0f,  1.0f,  0.0f, 1.0f,
+        0.0f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f,  1.0f,  0.0f, 1.0f};
+    // Right image
+    private float videoTextureCoordsTop[] = {
+            0.5f,  1.0f, 0.0f, 1.0f,
+            0.5f,  0.0f, 0.0f, 1.0f,
+            1.0f,  0.0f, 0.0f, 1.0f,
+            1.0f,  1.0f, 0.0f, 1.0f};
 
     private int shaderProgram;
 //    private int textureParam;
@@ -140,11 +158,11 @@ public class VideoRenderer {
         mMediaPlayer = new MediaPlayer();
         try
         {
-            AssetFileDescriptor afd = parentMainActivity.getAssets().openFd("bbb.mp4");
-            mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            mMediaPlayer.setDataSource("rtsp://192.168.178.33:8554/");
             mMediaPlayer.setSurface(new Surface(VideoSurfaceTexture));
+            mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setLooping(true);
-            mMediaPlayer.prepare();
+            mMediaPlayer.prepareAsync();
         }
         catch (IOException e){
             throw new RuntimeException("Error opening video file");}
@@ -208,5 +226,11 @@ public class VideoRenderer {
     public void cleanup() {
         if (mMediaPlayer!=null)
             mMediaPlayer.release();
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        Log.e(TAG, "MediaPlayer.onPrepared()");
+        mediaPlayer.start();
     }
 }

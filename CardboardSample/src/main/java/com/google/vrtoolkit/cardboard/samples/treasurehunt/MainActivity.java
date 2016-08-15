@@ -128,7 +128,7 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
     super.onResume();
     Log.i(TAG, "onResume()");
     if (videoRenderer != null) {
-      videoRenderer.start();
+      //videoRenderer.start();
     }
   }
 
@@ -218,7 +218,7 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
     //Setup video renderer:
     videoRenderer = new VideoRenderer(this);
     videoRenderer.setup();
-    videoRenderer.start();
+    //videoRenderer.start();
 
     checkGLError("onSurfaceCreated");
   }
