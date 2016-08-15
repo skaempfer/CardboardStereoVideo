@@ -1,6 +1,7 @@
-Stereo Video in Cardboard Java Example.
+Stereo Video Streaming in Cardboard Java.
 =====================
 
-This demo accompanies the blog post [Playing Stereo 3D Video in Cardboard Apps](https://matthewwellings.com/blog/playing-stereo-3d-video-in-cardboard-apps/) and is based on the [cardboard sample app](https://github.com/googlesamples/cardboard-java) and demonstrates how to display 3D stereo video on a virtual screen in a Cardboard Java app.
+This project is a fork of Matthew Wellings' "Stereo Video Streaming in Cardboard Java." repository which demonstrates the playback of video in Cardboard apps. The original repository can found under https://github.com/openforeveryone/CardboardStereoVideo
 
-This repo includes a low res/bitrate 1 min clip of Big Buck Bunny Sunflower Version from http://bbb3d.renderfarming.net/download.html 
+The app demonstrates the streaming of a Side-by-Side 3D video on a plane surface in front of the viewer.
+
